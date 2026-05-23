@@ -1,0 +1,215 @@
+<%- include("partials/header") %>
+
+<% if(message && message.length > 0){ %>
+<div id="popup" class="popup <%= type %> show">
+    <%= message %>
+</div>
+<% } %>
+
+ 
+
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="header">
+        <div class="school-logo">
+            <img src="https://i.ibb.co/SDLXGQ1b/images.png" alt="KSP Logo">
+        </div>
+        <h1>KSP PUBLIC SCHOOL</h1>
+        <p>Smart Attendance Management System</p>
+        <div class="date-box" id="liveDate"></div>
+    </div>
+
+    <!-- ADD STUDENT -->
+    <div class="controls">
+        <form action="/add" method="POST">
+            <div class="row">
+                <select name="cls" required>
+                    <option value="">Select Class</option>
+                    <option>Nursery</option>
+                    <option>LKG</option>
+                    <option>UKG</option>
+                    <option>1st</option>
+                    <option>2nd</option>
+                    <option>3rd</option>
+                    <option>4th</option>
+                    <option>5th</option>
+                    <option>6th</option>
+                    <option>7th</option>
+                    <option>8th</option>
+                    <option>9th</option>
+                    <option>10th</option>
+                </select>
+
+                <input type="number" name="roll" placeholder="Roll Number" required>
+                <input type="text" name="name" placeholder="Student Name" required>
+                <input type="number" name="phone" placeholder="Mobile Number" required>
+                
+                <button type="submit" class="btn-add">➕ Add Student</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- FILTER -->
+    <div class="filter-bar">
+        <div>
+            <strong>📚 Filter By Class</strong>
+        </div>
+        <form method="GET" action="/">
+            <select name="class" onchange="this.form.submit()">
+                <option value="All">All Classes</option>
+                <% ['Nursery','LKG','UKG','1st','2nd','3rd','4th','5th','6th','7th','8th','9th','10th'].forEach(cls => { %>
+                    <option value="<%= cls %>" <%= filterClass === cls ? "selected" : "" %>><%= cls %></option>
+                <% }) %>
+            </select>
+        </form>
+    </div>
+
+    <!-- TABLE -->
+  <div class="table-container" id="studentTable">
+        <table>
+            <thead>
+                <tr>
+                    <th>Class</th>
+                    <th>Roll</th>
+                    <th>Student Name</th>
+                    <th>Attendance</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if(students.length === 0){ %>
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 30px;">No Students Found</td>
+                    </tr>
+                <% } %>
+
+                <% students.forEach(student => { %>
+                    <tr>
+                        <td><strong><%= student.cls %></strong></td>
+                        <td><%= student.roll %></td>
+                        <td>👨‍🎓 <strong><%= student.name %></strong></td>
+                        <td>
+                            <form action="/status/<%= student._id %>" method="POST" style="margin:0;">
+                                <select name="status" onchange="this.form.submit()" class="<%= student.status === 'P' ? 'status-present' : 'status-absent' %>" style="padding: 6px 10px; font-size: 0.9rem;">
+                                    <option value="P" <%= student.status==="P" ? "selected" : "" %>>✅ Present</option>
+                                    <option value="A" <%= student.status==="A" ? "selected" : "" %>>❌ Absent</option>
+                                </select>
+                            </form>
+                        </td>
+                        <td>
+                            <div style="display: flex; gap: 5px; justify-content: flex-end;">
+                                <% if(student.status === "A") { %>
+                                  <a class="btn-whatsapp" target="_blank"
+   href="https://wa.me/<%= student.phone %>?text=<%= encodeURIComponent(
+`Dear Parent,
+
+This is to inform you that your child *${student.name}* is absent from KSP PUBLIC SCHOOL today (${new Date().toLocaleDateString('en-GB')}).
+
+आदरणीय अभिभावक, सूचित किया जाता है कि आज दिनांक ${new Date().toLocaleDateString('en-GB')} को आपका बच्चा *${student.name}* विद्यालय में अनुपस्थित है।
+
+Regards,
+Principal`
+) %>">
+  📲 WhatsApp
+</a>
+
+                                <% } %>
+                                <button type="button" class="btn-edit edit-btn" data-id="<%= student._id %>" data-cls="<%= student.cls %>" data-roll="<%= student.roll %>" data-name="<%= student.name %>" data-phone="<%= student.phone %>">✏ Edit</button>
+                            </div>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeModal()">&times;</span>
+        <h2>✏ Edit Student</h2>
+        <form id="editForm" method="POST">
+            <select name="cls" id="editCls" required>
+                <option>Nursery</option>
+                <option>LKG</option>
+                <option>UKG</option>
+                <option>1st</option>
+                <option>2nd</option>
+                <option>3rd</option>
+                <option>4th</option>
+                <option>5th</option>
+                <option>6th</option>
+                <option>7th</option>
+                <option>8th</option>
+                <option>9th</option>
+                <option>10th</option>
+            </select>
+            <input type="number" name="roll" id="editRoll" placeholder="Roll Number" required>
+            <input type="text" name="name" id="editName" placeholder="Student Name" required>
+            <input type="text" name="phone" id="editPhone" placeholder="Phone Number" required>
+            <button type="submit" class="btn-save">💾 Save Changes</button>
+        </form>
+        <form id="deleteForm" method="POST" style="margin-top:10px;">
+            <button type="submit" class="btn-delete-modal" onclick="return confirm('Delete this student?')">🗑 Delete Student</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    /* LIVE DATE SYSTEM */
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    document.getElementById('liveDate').innerHTML = new Date().toLocaleDateString('en-IN', options);
+
+    /* EDIT MODAL */
+    const modal = document.getElementById("editModal");
+
+    document.querySelectorAll(".edit-btn").forEach(button => {
+        button.addEventListener("click", function(){
+            modal.style.display = "block";
+            document.getElementById("editCls").value = this.dataset.cls;
+            document.getElementById("editRoll").value = this.dataset.roll;
+            document.getElementById("editName").value = this.dataset.name;
+            document.getElementById("editPhone").value = this.dataset.phone;
+            document.getElementById("editForm").action = "/edit/" + this.dataset.id;
+            document.getElementById("deleteForm").action = "/delete/" + this.dataset.id;
+        });
+    });
+
+    function closeModal(){ modal.style.display = "none"; }
+    window.addEventListener("click", function(e){ if(e.target === modal){ closeModal(); } });
+</script>
+
+<script>
+
+async function refreshTable(){
+
+    try{
+
+        const response = await fetch(window.location.href);
+
+        const html = await response.text();
+
+        const parser = new DOMParser();
+
+        const doc = parser.parseFromString(html, "text/html");
+
+        const newTable = doc.querySelector("#studentTable");
+
+        document.querySelector("#studentTable").innerHTML = newTable.innerHTML;
+
+    }catch(err){
+
+        console.log(err);
+
+    }
+
+}
+
+/* AUTO REFRESH EVERY 2 SECOND */
+setInterval(refreshTable, 2000);
+
+</script>
+<%- include("partials/footer") %>
+
