@@ -68,27 +68,7 @@ router.post("/add", async (req, res) => {
     }
 });
 
-/* UPDATE STATUS */
-router.post("/status/:id", async (req, res) => {
-
-    try {
-
-        await Student.findByIdAndUpdate(
-            req.params.id,
-            {
-                status: req.body.status
-            }
-        );
-
-        res.redirect("/?message=Attendance Updated&type=success");
-
-    } catch (error) {
-
-        console.log(error);
-
-        res.redirect("/?message=Update Failed&type=error");
-    }
-});
+ 
 
 /* DELETE */
 router.post("/delete/:id", async (req, res) => {
@@ -158,4 +138,37 @@ router.post("/edit/:id", async (req, res) => {
     }
 });
 
+router.post("/attendance-submit", async (req, res) => {
+
+    try {
+
+        const formData = req.body;
+
+        for (let key in formData) {
+
+            if (key.startsWith("status_")) {
+
+                const studentId = key.replace("status_", "");
+
+                const status = formData[key];
+
+                await Student.findByIdAndUpdate(studentId, {
+                    status: status
+                });
+
+            }
+
+        }
+
+        res.redirect("/");
+
+    } catch (err) {
+
+        console.log(err);
+
+        res.send("Attendance Submit Error");
+
+    }
+
+});
 module.exports = router;

@@ -90,12 +90,80 @@
                         <td><%= student.roll %></td>
                         <td>👨‍🎓 <strong><%= student.name %></strong></td>
                         <td>
-                            <form action="/status/<%= student._id %>" method="POST" style="margin:0;">
-                                <select name="status" onchange="this.form.submit()" class="<%= student.status === 'P' ? 'status-present' : 'status-absent' %>" style="padding: 6px 10px; font-size: 0.9rem;">
-                                    <option value="P" <%= student.status==="P" ? "selected" : "" %>>✅ Present</option>
-                                    <option value="A" <%= student.status==="A" ? "selected" : "" %>>❌ Absent</option>
-                                </select>
-                            </form>
+                          <form action="/attendance-submit" method="POST">
+
+<table>
+    <thead>
+        <tr>
+            <th>Class</th>
+            <th>Roll</th>
+            <th>Student Name</th>
+            <th>Attendance</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        <% students.forEach(student => { %>
+
+        <tr>
+
+            <td><strong><%= student.cls %></strong></td>
+
+            <td><%= student.roll %></td>
+
+            <td>
+                👨‍🎓 <strong><%= student.name %></strong>
+            </td>
+
+            <td>
+
+                <select
+                    name="status_<%= student._id %>"
+                    class="<%= student.status === 'P' ? 'status-present' : 'status-absent' %>">
+
+                    <option value="P" <%= student.status==='P' ? 'selected' : '' %>>✅ Present</option>
+
+                    <option value="A" <%= student.status==='A' ? 'selected' : '' %>>❌ Absent</option>
+
+                </select>
+
+            </td>
+
+            <td>
+
+                <% if(student.status === 'A') { %>
+
+                <a class="btn-whatsapp" target="_blank"
+                    href="https://wa.me/<%= student.phone %>">
+                    📲 WhatsApp
+                </a>
+
+                <% } %>
+
+            </td>
+
+        </tr>
+
+        <% }) %>
+
+    </tbody>
+
+</table>
+
+<div style="margin-top:20px; text-align:center;">
+
+    <button type="submit" class="btn-add"
+        style="padding:12px 30px; font-size:1rem;">
+
+        ✅ Submit Attendance
+
+    </button>
+
+</div>
+
+</form>
                         </td>
                         <td>
                             <div style="display: flex; gap: 5px; justify-content: flex-end;">
