@@ -179,10 +179,9 @@
                                <a class="btn-whatsapp" target="_blank"
    href="https://wa.me/<%= student.phone %>?text=<%= encodeURIComponent(
 `Dear Parent,
+This is to inform you that your child ${student.name} is absent from KSP PUBLIC SCHOOL today (${new Date().toLocaleDateString('en-GB')}).
 
-This is to inform you that your child *${student.name}* is absent from KSP PUBLIC SCHOOL today (${new Date().toLocaleDateString('en-GB')}).
-
-आदरणीय अभिभावक, सूचित किया जाता है कि आज दिनांक ${new Date().toLocaleDateString('en-GB')} को आपका बच्चा *${student.name}* विद्यालय में अनुपस्थित है।
+आदरणीय अभिभावक, सूचित किया जाता है कि आज दिनांक ${new Date().toLocaleDateString('en-GB')} को आपका बच्चा ${student.name} विद्यालय में अनुपस्थित है।
 
 Regards,
 Principal`

@@ -11,7 +11,7 @@ const connectDB = require("./config/db");
 const app = express();
 
 connectDB();
-
+  
 /* VIEW ENGINE */
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -22,7 +22,7 @@ app.use(express.static(path.join(__dirname, "public")));
 /* BODY PARSER */
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
+  
 /* METHOD OVERRIDE */
 app.use(methodOverride("_method"));
 
