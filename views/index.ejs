@@ -176,19 +176,51 @@
 
                                 <% if(student.status === "A") { %>
 
-                               <a class="btn-whatsapp" target="_blank"
-   href="https://wa.me/<%= student.phone %>?text=<%= encodeURIComponent(
-`Dear Parent,
-This is to inform you that your child ${student.name} is absent from KSP PUBLIC SCHOOL today (${new Date().toLocaleDateString('en-GB')}).
+ <button
+    type="button"
+    class="btn-whatsapp"
+    onclick="sendWhatsApp('<%= student.phone %>','<%= student.name %>')">
 
-आदरणीय अभिभावक, सूचित किया जाता है कि आज दिनांक ${new Date().toLocaleDateString('en-GB')} को आपका बच्चा ${student.name} विद्यालय में अनुपस्थित है।
+    📲 WhatsApp
 
-Regards,
-Principal`
-) %>">
-  📲 WhatsApp
-</a>
+</button>
+     
+ <script>
 
+function sendWhatsApp(phone, name){
+
+    const today =
+        new Date().toLocaleDateString('en-GB');
+
+    const message =
+"Dear Parent,\n" +
+"This is to inform you that your child *" +
+name.trim() +
+"* is absent from KSP PUBLIC SCHOOL today (" +
+today +
+").\n" +
+
+"आदरणीय अभिभावक,\n" +
+
+"सूचित किया जाता है कि आज दिनांक " +
+today +
+" को आपका बच्चा *" +
+name.trim() +
+"* विद्यालय में अनुपस्थित है।\n" +
+
+"Regards,\nPrincipal";
+
+    const whatsappURL =
+        "https://wa.me/" +
+        phone +
+        "?text=" +
+        encodeURIComponent(message);
+
+    window.open(whatsappURL, "_blank");
+
+}
+
+</script>
 
                                 <% } %>
 
