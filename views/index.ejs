@@ -181,35 +181,6 @@ Principal`
     window.addEventListener("click", function(e){ if(e.target === modal){ closeModal(); } });
 </script>
 
-<script>
-
-async function refreshTable(){
-
-    try{
-
-        const response = await fetch(window.location.href);
-
-        const html = await response.text();
-
-        const parser = new DOMParser();
-
-        const doc = parser.parseFromString(html, "text/html");
-
-        const newTable = doc.querySelector("#studentTable");
-
-        document.querySelector("#studentTable").innerHTML = newTable.innerHTML;
-
-    }catch(err){
-
-        console.log(err);
-
-    }
-
-}
-
-/* AUTO REFRESH EVERY 2 SECOND */
-setInterval(refreshTable, 2000);
-
-</script>
+ 
 <%- include("partials/footer") %>
 
